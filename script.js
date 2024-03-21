@@ -59,6 +59,12 @@ class Reader {
             || (48 <= cp && cp <= 57)   // Is digit?
             || (cp === 36 || cp === 95) // Is special ident character?
     }
+
+    skipSpaces() {
+        while (this.seenCodePoint(32)) { // Оптимиация: сравнение по коду символа, ord(' ')
+            this.next()
+        }
+    }
 }
 
 const subscript = {
