@@ -242,7 +242,7 @@ function format(text) {
 
 const prevopen = XMLHttpRequest.prototype.open;
 XMLHttpRequest.prototype.open = function(method, url, async = true, user = null, password = null) {
-    if (url === '/al_im.php?act=a_send') {
+    if (url === '/al_im.php?act=a_send' || url === 'al_im.php?act=a_edit_message') {
         const prevsend = this.send;
         this.send = (data) => {
             const query = new URLSearchParams(data);
