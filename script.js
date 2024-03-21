@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         MathWord
+// @name         Mathex
 // @version      1.0
 // @description  ...
 // @author       JuraSciix
