@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mathex
-// @version      1.0
+// @version      1.0.1
 // @description  ...
 // @author       JuraSciix
 // @match        *://*.vk.com/*
@@ -190,7 +190,11 @@ function formatMember(r, map) {
 
     let replace = ""
     for (let c of buffer) {
-        replace += map[c] ?? c
+        if (map[c] === undefined) {
+            // Не вышло отмаппить всю группу. Значит, чтобы не выглядело ущербно, не маппим её совсем.
+            return '^{' + buffer + '}'
+        }
+        replace += map[c]
     }
     return replace
 }
