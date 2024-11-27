@@ -90,6 +90,7 @@ const keywords = {
     delta: 'δ',
     Delta: 'Δ',
     epsilon: 'ε',
+    eps: 'ε',
     theta: 'θ',
     Theta: 'Θ',
     lambda: 'λ',
@@ -112,7 +113,9 @@ const keywords = {
     to: '→',
     eq: '⇔',
     wedge: '∧',
+	and: '∧',
     vee: '∨',
+	or: '∨',
     neg: '¬',
     forall: '∀',
     exists: '∃',
@@ -140,9 +143,14 @@ const keywords = {
     times: '×',
     dot: '∙',
     comp: '∘',
+	circ: '∘',
 
     sum: 'Σ',
-    prod: '∏'
+    prod: '∏',
+    inf: '∞',
+	
+	tao: '𝜏',
+	up: '↑'
 }
 
 function formatEscape(r) {
@@ -246,7 +254,7 @@ function format(text) {
 
 const prevopen = XMLHttpRequest.prototype.open;
 XMLHttpRequest.prototype.open = function(method, url, async = true, user = null, password = null) {
-    if (url === '/al_im.php?act=a_send' || url === 'al_im.php?act=a_edit_message') {
+    if (url === '/al_im.php?act=a_send' || url === '/al_im.php?act=a_edit_message') {
         const prevsend = this.send;
         this.send = (data) => {
             const query = new URLSearchParams(data);
