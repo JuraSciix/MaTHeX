@@ -463,12 +463,15 @@ class Parser {
 					if (!findTag && this.inPow) {
 						// [+-]?\d*.?						
 						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
-						let digit = (48 <= cp && cp <= 57); // '0'...'9' includes the cp?
+						let digit = (48 <= cp && cp <= 57);   // '0'...'9' includes the cp?
+						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
+							|| (97 <= cp && cp <= 122)        // 'a'...'z' includes the cp?
+							|| Object.values(DataSets.TAGS).includes(this.buffer.char);
 						if (powState === 0 && unary) {
 							powState = 1;
 						} else if (powState <= 2 && digit) { 
 							powState = 2;
-						} else if (powState < 3 && !unary && !digit) {
+						} else if (powState < 3 && alpha) {
 							powState = 3;
 						} else {
 							run = false;
