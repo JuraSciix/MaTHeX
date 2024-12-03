@@ -461,12 +461,12 @@ class Parser {
 					break;
 				default:
 					if (!findTag && this.inPow) {
-						let unary = (cp === 43 || cp === 45);
-						let digit = (48 <= cp && cp <= 57);
 						// [+-]?\d*.?						
-						if (powState === 0 && unary) { // ord '+', ord '-'
+						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
+						let digit = (48 <= cp && cp <= 57); // '0'...'9' includes the cp?
+						if (powState === 0 && unary) {
 							powState = 1;
-						} else if (powState <= 2 && digit) { // '0'...'9' includes the cp?
+						} else if (powState <= 2 && digit) { 
 							powState = 2;
 						} else if (powState < 3 && !unary && !digit) {
 							powState = 3;
