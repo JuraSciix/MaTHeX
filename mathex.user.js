@@ -3,7 +3,8 @@
 // @version      2.0.4
 // @description  ...
 // @author       JuraSciix
-// @match        *://*.vk.com/*
+// @match        https://vk.com/im*
+// @include      https://web.vk.me/*
 // @grant        none
 // @homepage     https://github.com/JuraSciix/mathex
 // @updateURL    https://raw.githubusercontent.com/JuraSciix/mathex/master/mathex.meta.js
@@ -518,7 +519,12 @@ function format(text) {
         debug = true;
     }
     let tree = new Parser(text).tree;
-    return debug ? tree.struct : tree.mapped;
+	if (debug) {
+		// alert затормаживает UI-поток и ни setTimeout, ни Promise не могут ему помешать...
+		// И паркует основной поток.
+		window.alert(tree.struct);
+	}
+    return tree.mapped;
 }
 
 // <=== КОМПОНОВАНИЕ ПАРСЕРА С МЕССЕНДЖЕРАМИ ВКОНТАКТЕ ===>
