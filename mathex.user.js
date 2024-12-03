@@ -521,18 +521,45 @@ function format(text) {
     return debug ? tree.struct : tree.mapped;
 }
 
+// <=== КОМПОНОВАНИЕ ПАРСЕРА С МЕССЕНДЖЕРАМИ ВКОНТАКТЕ ===>
+
+// Поддержка старого мессенджера (xhr -> al_im.php)
 const prevopen = XMLHttpRequest.prototype.open;
 XMLHttpRequest.prototype.open = function(method, url, async = true, user = null, password = null) {
     if (url === '/al_im.php?act=a_send' || url === '/al_im.php?act=a_edit_message') {
-        const prevsend = this.send;
+        var prevsend = this.send;
         this.send = (data) => {
-            const query = new URLSearchParams(data);
-            const msg = query.get('msg');
-            const formattedMsg = format(msg);
+            let query = new URLSearchParams(data);
+            let msg = query.get('msg');
+            let formattedMsg = format(msg);
             query.set('msg', formattedMsg);
             data = query.toString();
             prevsend?.call(this, data);
         };
     };
     prevopen?.call(this, method, url, async, user, password);
+};
+
+// Поддержка нового мессенджера (работает через fetch -> api.vk.com) и web.vk.me (fetch -> api.vk.me)
+const prevfetch = window.fetch;
+window.fetch = (url, options) => {
+    // new VK messenger support
+    if (typeof(url) === 'string' && (url.startsWith('https://api.vk.com/method/messages.send?') || url.startsWith('https://api.vk.com/method/messages.edit?'))) {
+        // options.body это URL query строка.
+        let query = new URLSearchParams(options.body);
+        let msg = query.get('message');
+        let formattedMsg = format(msg);
+        query.set('message', formattedMsg);
+        options.body = query.toString();
+    }
+
+    // web.vk.me support
+    if (typeof(url) === 'string' && (url.startsWith('https://api.vk.me/method/messages.send?') || url.startsWith('https://api.vk.me/method/messages.edit?'))) {
+        // options.body это URLSearchParams объект
+        let msg = options.body.get('message');
+        let formattedMsg = format(msg);
+        options.body.set('message', formattedMsg);
+    }
+
+    return prevfetch(url, options);
 };
