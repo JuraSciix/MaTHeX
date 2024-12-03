@@ -2,7 +2,10 @@
 
 This is a [Tampermonkey](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 extension
-that adds some TeX-like functionality in [vk.com messenger](https://vk.com/im).
+that adds some TeX-like functionality in follow:
+* [vk.com classic messenger](https://vk.com/im).
+* [vk.com new messenger](https://vk.com/im).
+* [web.vk.me](https://web.vk.me).
 
 ## Installing
 
