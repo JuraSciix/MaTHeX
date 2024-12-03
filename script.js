@@ -121,16 +121,16 @@ class StringReader {
 
 	get codePoint() { return this.buffer.codePointAt(this.i); }
 
+	get interval() {
+		return this.buffer.substring(this.p, this.i);
+	}
+
 	point(p = null) {
 		this.p = p ?? this.i;
 	}
 
 	return() {
 		this.i = this.p;
-	}
-
-	piece() {
-		return this.buffer.substring(this.p, this.i);
 	}
 
 	seen(str) {
@@ -390,16 +390,18 @@ class Parser {
 
 		if (!this.buffer.still) {
 			// Мы дошли до конца и не нашли before.
-			// Возвращаем исходную строчку.
-			return new LiteralGroup(this.buffer.buffer.substring(i));
+			// Возвращаем исходную подстроку.
+			this.buffer.point(i);
+			return new LiteralGroup(this.buffer.interval);
 		}
 		// Мы не дошли до конца, а значит встретили before. Пропускаем.
 		this.buffer.next();
 
 		let group = list(groups);
 		if (group === EmptyGroup.INSTANCE) {
-			// Не оборачиваем пустую группу
-			return group;
+			// Если в скобках ничего нет, то возвращаем исходную подстроку.
+			this.buffer.point(i);
+			return new LiteralGroup(this.buffer.interval);
 		}
 		return new WrapperGroup(group, left, right);
 	}
@@ -449,7 +451,7 @@ class Parser {
 
 			if (run) {
 				this.buffer.next();
-				if (findTag && DataSets.TAGS[this.buffer.piece()] !== undefined) {
+				if (findTag && DataSets.TAGS[this.buffer.interval] !== undefined) {
 					m = this.buffer.index;
 				}
 			}
@@ -461,7 +463,7 @@ class Parser {
 			this.buffer.return();
 		}
 		this.buffer.point(i);
-		return new LiteralGroup(this.buffer.piece());
+		return new LiteralGroup(this.buffer.interval);
 	}
 }
 
