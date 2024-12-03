@@ -323,8 +323,9 @@ class Parser {
 
 			if (!this.buffer.still) {
 				// Мы дошли до конца и не нашли \].
-				// Возвращаем исходную строчку.
-				return new LiteralGroup(this.buffer.buffer.substring(i));
+				// Возвращаем исходную подстроку.
+				this.buffer.point(i);
+				return new LiteralGroup(this.buffer.interval);
 			}
 			// Мы не дошли до конца, а значит встретили \[. Пропускаем
 			this.buffer.next(2);
@@ -333,7 +334,7 @@ class Parser {
 			return list(groups);
 		}
 
-		return this.der();
+		return this.term3();
 	}
 
 	script() {
@@ -345,32 +346,31 @@ class Parser {
 				this.buffer.next();
 				return new MapGroup('_', this.pow(), DataSets.SUBSCRIPT);
 			default:
-				return this.der();
+				return this.term2();
 		}
 	}
 
 	pow() {
 		console.assert(!this.inPow, "We are in the pow again?");
 		this.inPow = true;
-		let der = this.der();
+		let der = this.term2();
 		this.inPow = false;
 		return der;
 	}
 
-	der() {
+	term2() {
+		// Заметка: если режим скрипта отключён, то парсер пройдёт мимо этого уровня.
+		// Проще говоря, скобки не парсятся вне режима скрипта.
 		// Нет смысла проверять \[, эта проверка при надобности уже выполнена выше.
 		switch (this.buffer.codePoint) {
-			case 92: // ord '\\'
-				this.buffer.next();
-				return new TagGroup('\\', this.word(true, true), DataSets.TAGS);
-			case 40: // ord '('
+			case 40: // ord '('	
 				return this.wrap(41, '(', ')'); // ord ')'
 			case 91: // ord '['
 				return this.wrap(93, '[', ']'); // ord ']'
 			case 123: // ord '{'
 				return this.wrap(125, '{', '}'); // ord '}'
 			default:
-				return this.word(this.inScript, false);
+				return this.term3();
 		}
 	}
 
@@ -405,6 +405,15 @@ class Parser {
 		}
 		return new WrapperGroup(group, left, right);
 	}
+	
+	term3() {
+		if (this.buffer.codePoint === 92) { // ord '\\'
+			this.buffer.next();
+			return new TagGroup('\\', this.word(true, true), DataSets.TAGS);
+		}
+		
+		return this.word(this.inScript, false);
+	}
 
 	word(avoidScript, findTag) {
 		let run = true;
@@ -419,7 +428,9 @@ class Parser {
 				case 40: // ord '('
 				case 91: // ord '['
 				case 123: // ord '{'
-					run = false;
+					if (this.inScript) {
+						run = false;
+					}
 					break;
 				case 41: // ord ')'
 				case 93: // ord ']'
