@@ -94,14 +94,16 @@ then the script is NOT APPLIED to the entire bracket__
 
 For example:
 
-| Input               | Output   |
-|---------------------|----------|
-| \\\[\alpha^2x\\]    | α²ˣ      |
-| \\\[\alpha^x+2\\]   | αˣ+2     |
-| \\\[\alpha^(x+2)\\] | α⁽ˣ⁺²⁾   |
-| \\\[\alpha^xy\\]    | αˣy      |
-| \\\[\alpha^(xy)\\]  | α⁽ˣʸ⁾    |
-| \\\[α^\[x+2]\\]     | a^\[x+2] |
+| Input                | Output   |
+|----------------------|----------|
+| \\\[\alpha^2x\\]     | α²ˣ      |
+| \\\[\alpha^x+2\\]    | αˣ+2     |
+| \\\[\alpha^(x+2)\\]  | α⁽ˣ⁺²⁾   |
+| \\\[\alpha^xy\\]     | αˣy      |
+| \\\[\alpha^(xy)\\]   | α⁽ˣʸ⁾    |
+| \\\[\alpha^\[x+2]\\] | α^\[x+2] |
+| \\\[\alpha_(i+j)\\]  | α₍ᵢ₊ⱼ₎    |
+| \\\[\alpha_i+j\\]    | αᵢ+j    |
 
 > `\[α^[x+2]\]` is `α^[x+2]` because we can't make the `[]` as superscript.
 
