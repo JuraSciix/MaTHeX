@@ -291,7 +291,7 @@ class Parser {
 		let groups = [];
 
 		while (this.buffer.still) {
-			groups.push(this.top());
+			groups.push(this.term1());
 		}
 
 		// Сбрасываем каретку буфера для повторного парсинга
@@ -306,7 +306,7 @@ class Parser {
 		return tree;
 	}
 
-	top() {
+	term1() {
 		if (this.inScript) {
 			return this.script();
 		}
@@ -351,7 +351,7 @@ class Parser {
 	}
 
 	pow() {
-		console.assert(!this.inPow, "We are in the pow again?");
+		// Заметка: здесь хвостовая рекурсия. Можно не переживать о возврате значения this.inPow;
 		this.inPow = true;
 		let der = this.term2();
 		this.inPow = false;
@@ -361,7 +361,6 @@ class Parser {
 	term2() {
 		// Заметка: если режим скрипта отключён, то парсер пройдёт мимо этого уровня.
 		// Проще говоря, скобки не парсятся вне режима скрипта.
-		// Нет смысла проверять \[, эта проверка при надобности уже выполнена выше.
 		switch (this.buffer.codePoint) {
 			case 40: // ord '('	
 				return this.wrap(41, '(', ')'); // ord ')'
@@ -383,7 +382,7 @@ class Parser {
 
 		let groups = [];
 		while (this.buffer.still && this.buffer.codePoint !== unwrapper) {
-			groups.push(this.top());
+			groups.push(this.term1());
 		}
 
 		this.unwrapper = lastUnwrapper;
@@ -407,6 +406,7 @@ class Parser {
 	}
 	
 	term3() {
+		// Нет смысла проверять \[, эта проверка при надобности уже выполнена выше.
 		if (this.buffer.codePoint === 92) { // ord '\\'
 			this.buffer.next();
 			return new TagGroup('\\', this.word(true, true), DataSets.TAGS);
