@@ -180,7 +180,7 @@ class LiteralGroup extends Group {
 	}
 
 	get struct() {
-		return `literal(${this.content})`;
+		return `literal "${this.content}"`;
 	}
 }
 
@@ -198,7 +198,7 @@ class WrapperGroup extends Group {
 	}
 
 	get struct() {
-		return `wrapper(${this.subgroup.struct})`;
+		return `wrapper${this.left} ${this.subgroup.struct} ${this.right}`;
 	}
 }
 
@@ -217,7 +217,7 @@ class ListGroup extends Group {
 	}
 
 	get struct() {
-		return `list(${this.groups.map(g => g.struct).join(', ')})`;
+		return `list[${this.groups.map(g => g.struct).join(', ')}]`;
 	}
 }
 
@@ -254,7 +254,7 @@ class MapGroup extends IntegralGroup {
 	}
 
 	get struct() {
-		return `map(${this.id}:${this.subgroup.struct})`;
+		return `map(${this.id} : ${this.subgroup.struct})`;
 	}
 }
 
@@ -271,7 +271,7 @@ class TagGroup extends IntegralGroup {
 	}
 
 	get struct() {
-		return `tag(${this.id}:${this.subgroup.struct})`;
+		return `tag(${this.id} : ${this.subgroup.struct})`;
 	}
 }
 
