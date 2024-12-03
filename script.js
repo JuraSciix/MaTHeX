@@ -380,12 +380,21 @@ class Parser {
 		let lastUnwrapper = this.unwrapper;
 		this.unwrapper = unwrapper;
 
+		// Оптимизация:
+		// this.word создает посимвольные группы при this.inPow,
+		// Если степень обернуть в скобки, то посимвольная работа не обязательна, 
+		// потому что скрипт будет применен по всей подстроке.
+		// Внутри скобок можно скрыть факт this.inPow, чтобы this.word не делила группы.
+		let wasInPow = this.inPow;
+		this.inPow = false;
+
 		let groups = [];
 		while (this.buffer.still && this.buffer.codePoint !== unwrapper) {
 			groups.push(this.term1());
 		}
 
 		this.unwrapper = lastUnwrapper;
+		this.inPow = wasInPow;
 
 		if (!this.buffer.still) {
 			// Мы дошли до конца и не нашли before.
