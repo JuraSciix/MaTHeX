@@ -82,7 +82,7 @@ And more...
 
 ### Script Mode
 
-Script Mode can be enabled by wrapping text with __\[__ and __\]__.
+Script Mode can be enabled by wrapping text with __\\\[__ and __\\\]__.
 Inside the __Script Mode__ you can use **^**, **_** and parentheses:
 
 * **^** makes next group as superscript, if might.
