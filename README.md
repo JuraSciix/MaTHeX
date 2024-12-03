@@ -12,18 +12,29 @@ Right now available the following keywords:
 
 And more...
 
-### Math Mode
+### Script Mode
 
-Math Mode can be enabled by wrapping text with __\[__, __\]__.
+Script Mode can be enabled by wrapping text with __\[__ and __\]__.
 Inside math mode you can use **^** and **_**:
-* **^** makes next symbol or group as superscript, if might.
-* **_** makes next symbol or group as subscript, if might   
+* **^** makes next group as superscript, if might.
+* **_** makes next group as subscript, if might.
 
-`\[ \alpha^22 \]` is `α²2`.
+For example:
+`\[\alpha^2x\]` is `α²ˣ`.
+`\[\alpha^xy\]` is `αˣy`.
+`\[\alpha^{2n}\]` is `α²ⁿ`
 
+### Parenthesises
 
-### Groups
+Parenthesises useful when you want:
+* compound a lot of groups to one.
+* split contents to different groups.
 
-Group is sequence of characters wrapper with __{__, __}__.
+You can use different types of parenthesises:
+* `()`
+* `[]`
+* `{}`
 
-`\[ \alpha^{2n} \]` is `α²ⁿ`
+For example:
+`\[\alpha^(x+2)\]` is `α⁽ˣ⁺²⁾`, but `α^[x+2]` is `α^[x+2]` because of we can't make the `[]` as superscript.
+`\[(\alpha^2)x\]` is `(α²)x`
