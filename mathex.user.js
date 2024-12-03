@@ -461,15 +461,17 @@ class Parser {
 					break;
 				default:
 					if (!findTag && this.inPow) {
-						// Мы сканируем только цифры и один символ после них, если есть.
-						if (powState > 1) {
-							run = false;
-							break;
-						}
-						if (48 <= cp && cp <= 57) { // '0'...'9' includes the cp?
+						let unary = (cp === 43 || cp === 45);
+						let digit = (48 <= cp && cp <= 57);
+						// [+-]?\d*.?						
+						if (powState === 0 && unary) { // ord '+', ord '-'
 							powState = 1;
-						} else {
+						} else if (powState <= 2 && digit) { // '0'...'9' includes the cp?
 							powState = 2;
+						} else if (powState < 3 && !unary && !digit) {
+							powState = 3;
+						} else {
+							run = false;
 						}
 					}
 			}
