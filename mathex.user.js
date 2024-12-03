@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mathex
-// @version      2.0.0
+// @version      2.0.1
 // @description  ...
 // @author       JuraSciix
 // @match        *://*.vk.com/*
@@ -437,6 +437,8 @@ class Parser {
 			let cp = this.buffer.codePoint;
 			switch (cp) {
 				case 92: // ord '\\'
+					run = false;
+					break;
 				case 40: // ord '('
 				case 91: // ord '['
 				case 123: // ord '{'
