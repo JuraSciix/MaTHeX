@@ -5,6 +5,9 @@
 // @author       JuraSciix
 // @match        *://*.vk.com/*
 // @grant        none
+// @homepage     https://github.com/JuraSciix/mathex
+// @updateURL    https://raw.githubusercontent.com/JuraSciix/mathex/master/mathex.meta.js
+// @downloadURL  https://raw.githubusercontent.com/JuraSciix/mathex/master/mathex.user.js
 // ==/UserScript==
 
 class DataSets {
