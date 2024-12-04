@@ -11,6 +11,32 @@
 // @downloadURL  https://raw.githubusercontent.com/JuraSciix/mathex/master/mathex.user.js
 // ==/UserScript==
 
+// ====================          №1           ====================
+function prepare(obj) {
+	// Сортировка по длине ключа
+	return Object.keys(obj)
+		.sort((x, y) => y.length - x.length)
+		.reduce(
+			(acc, key) => {
+				acc[key] = obj[key];
+				return acc;
+			},
+			{}
+		);
+}
+
+const preparedDict = prepare(dict);
+
+function format(str) {
+	for (let [key, replacement] of Object.entries(preparedDict)) {
+		str = str.replace(key, replacement);
+	}
+	return str;
+}
+
+
+
+
 class DataSets {
 	static SUBSCRIPT = {
         '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
@@ -77,75 +103,20 @@ class DataSets {
         omega: 'ω',
         Omega: 'Ω',
 
-	// Готический (фрактурный) алфавит
-        gothA: '𝔄',
-        gothB: '𝔅',
-        gothC: 'ℭ',
-        gothD: '𝔇',
-        gothE: '𝔈',
-        gothF: '𝔉',
-        gothG: '𝔊',
-        gothH: 'ℌ',
-        gothI: 'ℑ',
-        gothJ: '𝔍',
-        gothK: '𝔎',
-        gothL: '𝔏',
-        gothM: '𝔐',
-        gothN: '𝔑',
-        gothO: '𝔒',
-        gothP: '𝔓',
-        gothQ: '𝔔',
-        gothR: 'ℜ',
-        gothS: '𝔖',
-        gothT: '𝔗',
-        gothU: '𝔘',
-        gothV: '𝔙',
-        gothW: '𝔚',
-        gothX: '𝔛',
-        gothY: '𝔜',
-        gothZ: 'ℨ',
-
-        gotha: '𝔞',
-        gothb: '𝔟',
-        gothc: '𝔠',
-        gothd: '𝔡',
-        gothe: '𝔢',
-        gothf: '𝔣',
-        gothg: '𝔤',
-        gothh: '𝔥',
-        gothi: '𝔦',
-        gothj: '𝔧',
-        gothk: '𝔨',
-        gothl: '𝔩',
-        gothm: '𝔪',
-        gothn: '𝔫',
-        gotho: '𝔬',
-        gothp: '𝔭',
-        gothq: '𝔮',
-        gothr: '𝔯',
-        goths: '𝔰',
-        gotht: '𝔱',
-        gothu: '𝔲',
-        gothv: '𝔳',
-        gothw: '𝔴',
-        gothx: '𝔵',
-        gothy: '𝔶',
-        gothz: '𝔷',
-
         // Новые математические символы
-	cup: '⋃',
-	union: '⋃',
-	cap: '⋂',
-	intrsct: '⋂',
+        cup: '⋃',
+        union: '⋃',
+        cap: '⋂',
+        intrsct: '⋂',
         forall: '∀',
         exists: '∃',
         emptyset: '∅',
         varnothing: '∅', // LaTeX
         infty: '∞',
-	inf: '∞',
+        inf: '∞',
         nabla: '∇',
         partial: '∂',
-	der: '∂', // derivative
+        der: '∂', // derivative
         approx: '≈',
         equiv: '≡',
         nequiv: '≢',
@@ -169,7 +140,7 @@ class DataSets {
         therefore: '∴',
         because: '∵',
         cdot: '⋅',
-	dot: '⋅',
+        dot: '⋅',
         times: '×',
         div: '÷',
         surd: '√', // wtf?
@@ -229,21 +200,22 @@ class DataSets {
         hookright: '↪',
         hookleft: '↩',
         // Логические символы
-	wedge: '∧',
-	vee: '∨',
+        wedge: '∧',
+        vee: '∨',
         and: '∧',
         or: '∨',
         neg: '¬',
-	not: '¬',
+         not: '¬',
         implies: '⇒',
         iff: '⇔',
-	eq: '⇔',
-	to: '→',
+        eq: '⇔',
+        to: '→',
 		
         // Другие символы
         sharp: '♯',
         flat: '♭',
         natural: '♮',
+		
         // Операторы
         sum: '∑',
         prod: '∏',
@@ -251,9 +223,10 @@ class DataSets {
         int: '∫',
         iint: '∬',
         iiint: '∭',
+		
         // Декоративные символы
         circ: '∘',
-	comp: '∘',
+        comp: '∘',
         bigcirc: '◯',
         bullet: '∙',
         // Скобки
@@ -264,6 +237,77 @@ class DataSets {
         langle: '⟨',
         rangle: '⟩',
     };
+	
+	// Группа готических символов
+	static GOTHIC = {
+		// Готический (фрактурный) алфавит
+        A: '𝔄',
+        B: '𝔅',
+        C: 'ℭ',
+        D: '𝔇',
+        E: '𝔈',
+        F: '𝔉',
+        G: '𝔊',
+        H: 'ℌ',
+        I: 'ℑ',
+        J: '𝔍',
+        K: '𝔎',
+        L: '𝔏',
+        M: '𝔐',
+        N: '𝔑',
+        O: '𝔒',
+        P: '𝔓',
+        Q: '𝔔',
+        R: 'ℜ',
+        S: '𝔖',
+        T: '𝔗',
+        U: '𝔘',
+        V: '𝔙',
+        W: '𝔚',
+        X: '𝔛',
+        Y: '𝔜',
+        Z: 'ℨ',
+
+        a: '𝔞',
+        b: '𝔟',
+        c: '𝔠',
+        d: '𝔡',
+        e: '𝔢',
+        f: '𝔣',
+        g: '𝔤',
+        h: '𝔥',
+        i: '𝔦',
+        j: '𝔧',
+        k: '𝔨',
+        l: '𝔩',
+        m: '𝔪',
+        n: '𝔫',
+        o: '𝔬',
+        p: '𝔭',
+        q: '𝔮',
+        r: '𝔯',
+        s: '𝔰',
+        t: '𝔱',
+        u: '𝔲',
+        v: '𝔳',
+        w: '𝔴',
+        x: '𝔵',
+        y: '𝔶',
+        z: '𝔷',
+	};
+	
+	// Группы
+	static GROUPS = {
+		g: DataSets.GOTHIC,
+		goth: DataSets.GOTHIC,
+		gothic: DataSets.GOTHIC,
+		sup: DataSets.SUPERSCRIPT,
+		super: DataSets.SUPERSCRIPT,
+		sub: DataSets.SUBSCRIPT,
+		S: DataSets.SUPERSCRIPT,
+		s: DataSets.SUBSCRIPT,
+		def: DataSets.TAGS
+	};
 }
 
 class StringReader {
@@ -393,9 +437,12 @@ class IntegralGroup extends Group {
 }
 
 class MapGroup extends IntegralGroup {
-	constructor(id, subgroup, map) {
+	constructor(id, subgroup, map, strict) {
 		super(id, subgroup);
 		this.map = map;
+		// В строгом режиме маппинг отменяется, если
+		// хотя бы один символ нельзя отмаппить.
+		this.strict = strict;
 	}
 
 	get mapped() {
@@ -405,8 +452,11 @@ class MapGroup extends IntegralGroup {
 		for (let ch of input) {
 			let mch = this.map[ch];
 			if (mch === undefined) {
-				success = false;
-				break;
+				if (this.strict) {
+					success = false;
+					break;
+				}
+				mch = ch;
 			}
 			mapped += mch;
 		}
@@ -499,13 +549,13 @@ class Parser {
 	}
 
 	script() {
-		switch (this.buffer.char) {
-			case '^':
+		switch (this.buffer.codePoint) {
+			case 94: // ord '^'
 				this.buffer.next();
-				return new MapGroup('^', this.pow(), DataSets.SUPERSCRIPT);
-			case '_':
+				return new MapGroup('^', this.pow(), DataSets.SUPERSCRIPT, true);
+			case 95: // ord '_'
 				this.buffer.next();
-				return new MapGroup('_', this.pow(), DataSets.SUBSCRIPT);
+				return new MapGroup('_', this.pow(), DataSets.SUBSCRIPT, true);
 			default:
 				return this.term2();
 		}
@@ -524,11 +574,11 @@ class Parser {
 		// Проще говоря, скобки не парсятся вне режима скрипта.
 		switch (this.buffer.codePoint) {
 			case 40: // ord '('	
-				return this.wrap(41, '(', ')'); // ord ')'
+				return this.wrap(41, '(', ')'); // 41 = ord ')'
 			case 91: // ord '['
-				return this.wrap(93, '[', ']'); // ord ']'
+				return this.wrap(93, '[', ']'); // 93 = ord ']'
 			case 123: // ord '{'
-				return this.wrap(125, '{', '}'); // ord '}'
+				return this.wrap(125, '{', '}'); // 125 = ord '}'
 			default:
 				return this.term3();
 		}
@@ -579,13 +629,33 @@ class Parser {
 		// Нет смысла проверять \[, эта проверка при надобности уже выполнена выше.
 		if (this.buffer.codePoint === 92) { // ord '\\'
 			this.buffer.next();
-			return new TagGroup('\\', this.word(true, true), DataSets.TAGS);
+			let name = this.wordString(true, true);
+			if (DataSets.GROUPS[name] !== undefined) {
+				return new MapGroup(`\\${name}`, this.group(), DataSets.GROUPS[name], false);
+			}
+			return new TagGroup('\\', new LiteralGroup(name), DataSets.TAGS);
 		}
 		
-		return this.word(this.inScript, false);
+		return new LiteralGroup(this.wordString(this.inScript, false));
+	}
+	
+	group() {
+		if (this.buffer.codePoint === 123) { // 123 = ord '{'
+			let i = this.buffer.index;
+			
+			let wrapper = this.wrap(125, '', ''); // 125 = ord '}'
+			if (wrapper instanceof WrapperGroup) {
+				return wrapper.subgroup;
+			}
+			
+			// Если подстрока некорректна, то откатываемся назад и возвращаем пустую группу
+			this.buffer.point(i);
+			this.buffer.return();
+		}
+		return EmptyGroup.INSTANCE;
 	}
 
-	word(avoidScript, findTag) {
+	wordString(avoidScript, findTag) {
 		let run = true;
 		let i = this.buffer.index;
 		let m = null;
@@ -600,31 +670,32 @@ class Parser {
 				case 40: // ord '('
 				case 91: // ord '['
 				case 123: // ord '{'
-					if (this.inScript) {
+					if (this.inScript || findTag) {
 						run = false;
 					}
 					break;
 				case 41: // ord ')'
 				case 93: // ord ']'
 				case 125: // ord '}'
-					if (cp === this.unwrapper) {
+					if (cp === this.unwrapper || findTag) {
 						run = false;
 					}
 					break;
 				case 94: // ord '^'
 				case 95: // ord '_'
-					if (avoidScript) {
+					if (avoidScript || findTag) {
 						run = false;
 					}
 					break;
 				default:
 					if (!findTag && this.inPow) {
-						// [+-]?\d*.?						
-						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
+						// [+-]?\d*.?					
+						let unary = (cp === 43 || cp === 45); // 43 = ord '+'; 45 = ord '-'
 						let digit = (48 <= cp && cp <= 57);   // '0'...'9' includes the cp?
 						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
 							|| (97 <= cp && cp <= 122)        // 'a'...'z' includes the cp?
-							|| Object.values(DataSets.TAGS).includes(this.buffer.char);
+							|| Object.values(DataSets.TAGS).includes(this.buffer.char)
+							|| Object.values(DataSets.GROUPS).includes(this.buffer.char);
 						if (powState === 0 && unary) {
 							powState = 1;
 						} else if (powState <= 2 && digit) { 
@@ -639,7 +710,8 @@ class Parser {
 
 			if (run) {
 				this.buffer.next();
-				if (findTag && DataSets.TAGS[this.buffer.interval] !== undefined) {
+				let str = this.buffer.interval;
+				if (findTag && (DataSets.TAGS[str] || DataSets.GROUPS[str])) {
 					m = this.buffer.index;
 				}
 			}
@@ -651,7 +723,7 @@ class Parser {
 			this.buffer.return();
 		}
 		this.buffer.point(i);
-		return new LiteralGroup(this.buffer.interval);
+		return this.buffer.interval;
 	}
 }
 
