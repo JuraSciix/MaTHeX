@@ -3,7 +3,7 @@
 // @version      2.0.4
 // @description  ...
 // @author       JuraSciix
-// @match        https://vk.com/im*
+// @match        https://vk.com/im?*
 // @include      https://web.vk.me/*
 // @grant        none
 // @homepage     https://github.com/JuraSciix/mathex
