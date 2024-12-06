@@ -4,6 +4,7 @@
 // @description  ...
 // @author       JuraSciix
 // @match        https://vk.com/*
+// @include      https://vk.com/im/convo/*
 // @include      https://web.vk.me/*
 // @grant        none
 // @homepage     https://github.com/JuraSciix/mathex
