@@ -296,8 +296,8 @@ class DataSets {
         z: '𝔷',
 	};
 	
-	// Группы
-	static GROUPS = {
+	// Алфавиты
+	static ALPHABETS = {
 		g: DataSets.GOTHIC,
 		goth: DataSets.GOTHIC,
 		gothic: DataSets.GOTHIC,
@@ -630,8 +630,8 @@ class Parser {
 		if (this.buffer.codePoint === 92) { // ord '\\'
 			this.buffer.next();
 			let name = this.wordString(true, true);
-			if (DataSets.GROUPS[name] !== undefined) {
-				return new MapGroup(`\\${name}`, this.group(), DataSets.GROUPS[name], false);
+			if (DataSets.ALPHABETS[name] !== undefined) {
+				return new MapGroup(`\\${name}`, this.group(), DataSets.ALPHABETS[name], false);
 			}
 			return new TagGroup('\\', new LiteralGroup(name), DataSets.TAGS);
 		}
@@ -695,7 +695,7 @@ class Parser {
 						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
 							|| (97 <= cp && cp <= 122)        // 'a'...'z' includes the cp?
 							|| Object.values(DataSets.TAGS).includes(this.buffer.char)
-							|| Object.values(DataSets.GROUPS).includes(this.buffer.char);
+							|| Object.values(DataSets.ALPHABETS).includes(this.buffer.char);
 						if (powState === 0 && unary) {
 							powState = 1;
 						} else if (powState <= 2 && digit) { 
@@ -711,7 +711,7 @@ class Parser {
 			if (run) {
 				this.buffer.next();
 				let str = this.buffer.interval;
-				if (findTag && (DataSets.TAGS[str] || DataSets.GROUPS[str])) {
+				if (findTag && (DataSets.TAGS[str] || DataSets.ALPHABETS[str])) {
 					m = this.buffer.index;
 				}
 			}
