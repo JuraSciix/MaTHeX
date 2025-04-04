@@ -608,7 +608,9 @@ class DataSets {
         inf: '∞',
         nabla: '∇',
         partial: '∂',
-		
+
+	isomorph: '≅',
+	isomorph0: '≃',
         der: '∂', // derivative
         approx: '≈',
         equiv: '≡',
@@ -622,7 +624,7 @@ class DataSets {
         subset: '⊂',
         supset: '⊃',
         in: '∈',
-		notin: '∉',
+	notin: '∉',
         ni: '∋',
         prod: '∏',
         sum: '∑',
