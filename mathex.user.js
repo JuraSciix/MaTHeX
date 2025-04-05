@@ -737,5 +737,7 @@ class DataSets {
         rceil: '⌉',
         langle: '⟨',
         rangle: '⟩',
+
+	dash: '—'
     };
 }
