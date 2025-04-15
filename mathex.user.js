@@ -17,7 +17,8 @@
 // Поддержка старого мессенджера (xhr -> al_im.php)
 const prevopen = XMLHttpRequest.prototype.open;
 XMLHttpRequest.prototype.open = function(method, url, async = true, user = null, password = null) {
-    if (url === '/al_im.php?act=a_send' || url === '/al_im.php?act=a_edit_message') {
+    const oldEndpoints = ['/al_im.php?act=a_send', '/al_im.php?act=a_edit_message'];
+    if (oldEndpoints.includes(url)) {
         var prevsend = this.send;
         this.send = (data) => {
             let query = new URLSearchParams(data);
@@ -35,7 +36,8 @@ XMLHttpRequest.prototype.open = function(method, url, async = true, user = null,
 const prevfetch = window.fetch;
 window.fetch = (url, options) => {
     // new VK messenger support
-    if (typeof(url) === 'string' && (url.startsWith('https://api.vk.com/method/messages.send?') || url.startsWith('https://api.vk.com/method/messages.edit?'))) {
+	const apiEndpoints = ['https://api.vk.com/method/messages.send?', 'https://api.vk.com/method/messages.edit?'];
+    if (typeof(url) === 'string' && apiEndpoints.some(x => url.startsWith(x))) {
         // options.body это URL query строка.
         let query = new URLSearchParams(options.body);
         let msg = query.get('message');
@@ -45,7 +47,8 @@ window.fetch = (url, options) => {
     }
 
     // web.vk.me support
-    if (typeof(url) === 'string' && (url.startsWith('https://api.vk.me/method/messages.send?') || url.startsWith('https://api.vk.me/method/messages.edit?'))) {
+    const meEndpoints = ['https://api.vk.me/method/messages.send?', 'https://api.vk.me/method/messages.edit?'];
+	if (typeof(url) === 'string' && meEndpoints.some(x => url.startsWith(x))) {
         // options.body это URLSearchParams объект
         let msg = options.body.get('message');
         let formattedMsg = Mathex.format(msg);
@@ -740,7 +743,6 @@ class DataSets {
         rceil: '⌉',
         langle: '⟨',
         rangle: '⟩',
-
-	dash: '—'
+        dash: '—'
     };
 }
