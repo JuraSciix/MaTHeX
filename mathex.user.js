@@ -101,7 +101,7 @@ class Parser {
 			groups.push(this.term1());
 		}
 
-		let tree = list(groups);
+		let tree = ListGroup.of(groups);
 		if (tree === EmptyGroup.INSTANCE) {
 			// Если пусто, то возвращаем исходную строку.
 			return new LiteralGroup(this.buffer.buffer);
@@ -135,7 +135,7 @@ class Parser {
 			this.buffer.next(2);
 
 			this.inScript = false;
-			return list(groups);
+			return ListGroup.of(groups);
 		}
 
 		return this.term3();
@@ -209,7 +209,7 @@ class Parser {
 		// Мы не дошли до конца, а значит встретили before. Пропускаем.
 		this.buffer.next();
 
-		let group = list(groups);
+		let group = ListGroup.of(groups);
 		if (group === EmptyGroup.INSTANCE) {
 			// Если в скобках ничего нет, то возвращаем исходную подстроку.
 			this.buffer.point(i);
@@ -302,17 +302,6 @@ class Parser {
 	}
 }
 
-function list(groups) {
-	switch (groups.length) {
-		case 0:
-			return EmptyGroup.INSTANCE;
-		case 1:
-			return groups[0];
-		default:
-			return new ListGroup(groups);
-	}
-}
-
 class Group {
 	get mapped() {
 		throw new Error("Group.mapped must be overrided");
@@ -378,6 +367,18 @@ class WrapperGroup extends Group {
 }
 
 class ListGroup extends Group {
+	
+	static of(groups) {
+		switch (groups.length) {
+			case 0:
+				return EmptyGroup.INSTANCE;
+			case 1:
+				return groups[0];
+			default:
+				return new ListGroup(groups);
+		}
+	}
+	
 	constructor(groups) {
 		super();
 		this.groups = groups;
