@@ -240,17 +240,21 @@ class Parser {
 				case 92: // ord '\\'
 					run = false;
 					break;
-				case 40: // ord '('
-				case 91: // ord '['
 				case 123: // ord '{'
 					if (findTag || (this.inScript && !this.inIndex)) {
 						run = false;
 					}
 					break;
-				case 41: // ord ')'
-				case 93: // ord ']'
 				case 125: // ord '}'
 					if (findTag || this.inIndex) {
+						run = false;
+					}
+					break;
+				case 40: // ord '('
+				case 91: // ord '['
+				case 41: // ord ')'
+				case 93: // ord ']'
+					if (findTag) {
 						run = false;
 					}
 					break;
