@@ -88,7 +88,7 @@ class Parser {
 		// Последняя не закрытая скобка (если есть)
 		this.unwrapper = null;
 		// Мы сканируем степень?
-		this.inPow = false;
+		this.inIndex = false;
 	}
 
 	get tree() {
@@ -145,20 +145,20 @@ class Parser {
 		switch (this.buffer.codePoint) {
 			case 94: // ord '^'
 				this.buffer.next();
-				return new MapGroup('^', this.pow(), DataSets.SUPERSCRIPT);
+				return new MapGroup('^', this.index(), DataSets.SUPERSCRIPT);
 			case 95: // ord '_'
 				this.buffer.next();
-				return new MapGroup('_', this.pow(), DataSets.SUBSCRIPT);
+				return new MapGroup('_', this.index(), DataSets.SUBSCRIPT);
 			default:
-				return this.term2();
+				return this.term3();
 		}
 	}
 
-	pow() {
-		// Заметка: здесь хвостовая рекурсия. Можно не переживать о возврате значения this.inPow;
-		this.inPow = true;
+	index() {
+		// Заметка: здесь хвостовая рекурсия. Можно не переживать о возврате значения this.inIndex;
+		this.inIndex = true;
 		let der = this.term2();
-		this.inPow = false;
+		this.inIndex = false;
 		return der;
 	}
 
@@ -185,20 +185,20 @@ class Parser {
 		this.unwrapper = unwrapper;
 
 		// Оптимизация:
-		// this.word создает посимвольные группы при this.inPow,
+		// this.word создает посимвольные группы при this.inIndex,
 		// Если степень обернуть в скобки, то посимвольная работа не обязательна,
 		// потому что скрипт будет применен по всей подстроке.
-		// Внутри скобок можно скрыть факт this.inPow, чтобы this.word не делила группы.
-		let wasInPow = this.inPow;
-		this.inPow = false;
+		// Внутри скобок можно скрыть факт this.inIndex, чтобы this.word не делила группы.
+		//let wasInIndex = this.inIndex;
+		//this.inIndex = false;
 
 		let groups = [];
 		while (this.buffer.still && this.buffer.codePoint !== unwrapper) {
-			groups.push(this.term1());
+			groups.push(this.term3());
 		}
 
 		this.unwrapper = lastUnwrapper;
-		this.inPow = wasInPow;
+		//this.inIndex = wasInIndex;
 
 		if (!this.buffer.still) {
 			// Мы дошли до конца и не нашли before.
@@ -222,17 +222,17 @@ class Parser {
 		// Нет смысла проверять \[, эта проверка при надобности уже выполнена выше.
 		if (this.buffer.codePoint === 92) { // ord '\\'
 			this.buffer.next();
-			return new TagGroup('\\', this.word(true, true), DataSets.TAGS);
+			return new TagGroup('\\', this.word(true), DataSets.TAGS);
 		}
 
-		return this.word(this.inScript, false);
+		return this.word(false);
 	}
 
-	word(avoidScript, findTag) {
+	word(findTag) {
 		let run = true;
 		let i = this.buffer.index;
 		let m = null;
-		let powState = 0;
+		let indexState = 0;
 		this.buffer.point();
 		while (run && this.buffer.still) {
 			let cp = this.buffer.codePoint;
@@ -243,25 +243,25 @@ class Parser {
 				case 40: // ord '('
 				case 91: // ord '['
 				case 123: // ord '{'
-					if (this.inScript) {
+					if (findTag || (this.inScript && !this.inIndex)) {
 						run = false;
 					}
 					break;
 				case 41: // ord ')'
 				case 93: // ord ']'
 				case 125: // ord '}'
-					if (cp === this.unwrapper) {
+					if (findTag || this.inIndex) {
 						run = false;
 					}
 					break;
 				case 94: // ord '^'
 				case 95: // ord '_'
-					if (avoidScript) {
+					if (findTag || this.inScript) {
 						run = false;
 					}
 					break;
 				default:
-					if (!findTag && this.inPow) {
+					if (!findTag && this.inIndex) {
 						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
 						let digit = (48 <= cp && cp <= 57);   // '0'...'9' includes the cp?
 						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
@@ -276,8 +276,8 @@ class Parser {
 						//	powState = 3;
 						//} else {
 						// [+-]|\d|\w
-						if (powState === 0 && (unary || digit || alpha)) {
-							powState = 1;
+						if (indexState === 0 && (unary || digit || alpha)) {
+							indexState = 1;
 						} else {
 							run = false;
 						}
@@ -629,8 +629,8 @@ class DataSets {
         nabla: '∇',
         partial: '∂',
 
-	isomorph: '≅',
-	isomorph0: '≃',
+		isomorph: '≅',
+		isomorph0: '≃',
         der: '∂', // derivative
         approx: '≈',
         equiv: '≡',
@@ -644,7 +644,7 @@ class DataSets {
         subset: '⊂',
         supset: '⊃',
         in: '∈',
-	notin: '∉',
+		notin: '∉',
         ni: '∋',
         prod: '∏',
         sum: '∑',
