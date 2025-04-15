@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mathex
-// @version      2.0.8
+// @version      2.1.0
 // @description  ...
 // @author       JuraSciix
 // @match        *://*.vk.com/*
