@@ -166,18 +166,18 @@ class Parser {
 		// Заметка: если режим скрипта отключён, то парсер пройдёт мимо этого уровня.
 		// Проще говоря, скобки не парсятся вне режима скрипта.
 		switch (this.buffer.codePoint) {
-			case 40: // ord '('
-				return this.wrap(41, '(', ')'); // ord ')'
-			case 91: // ord '['
-				return this.wrap(93, '[', ']'); // ord ']'
+			//case 40: // ord '('
+			//	return this.wrap(41, '(', ')'); // ord ')'
+			//case 91: // ord '['
+			//	return this.wrap(93, '[', ']'); // ord ']'
 			case 123: // ord '{'
-				return this.wrap(125, '{', '}'); // ord '}'
+				return this.wrap(125, '{', '}', true); // ord '}'
 			default:
 				return this.term3();
 		}
 	}
 
-	wrap(unwrapper, left, right) {
+	wrap(unwrapper, left, right, erase = false) {
 		let i = this.buffer.index;
 		this.buffer.next();
 
@@ -215,7 +215,7 @@ class Parser {
 			this.buffer.point(i);
 			return new LiteralGroup(this.buffer.interval);
 		}
-		return new WrapperGroup(group, left, right);
+		return new WrapperGroup(group, left, right, erase);
 	}
 
 	term3() {
@@ -262,18 +262,22 @@ class Parser {
 					break;
 				default:
 					if (!findTag && this.inPow) {
-						// [+-]?\d*.?
 						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
 						let digit = (48 <= cp && cp <= 57);   // '0'...'9' includes the cp?
 						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
 							|| (97 <= cp && cp <= 122)        // 'a'...'z' includes the cp?
 							|| Object.values(DataSets.TAGS).includes(this.buffer.char);
-						if (powState === 0 && unary) {
+						// [+-]?\d*.?
+						//if (powState === 0 && unary) {
+						//	powState = 1;
+						//} else if (powState <= 2 && digit) {
+						//	powState = 2;
+						//} else if (powState < 3 && alpha) {
+						//	powState = 3;
+						//} else {
+						// [+-]|\d|\w
+						if (powState === 0 && (unary || digit || alpha)) {
 							powState = 1;
-						} else if (powState <= 2 && digit) {
-							powState = 2;
-						} else if (powState < 3 && alpha) {
-							powState = 3;
 						} else {
 							run = false;
 						}
@@ -347,20 +351,29 @@ class LiteralGroup extends Group {
 }
 
 class WrapperGroup extends Group {
-	constructor(subgroup, left, right) {
+	constructor(subgroup, left, right, erase) {
 		super();
 		this.subgroup = subgroup;
 		this.left = left;
 		this.right = right;
+		this.erase = erase;
 	}
 
 	get mapped() {
 		// Я предполагаю, что все значения СТРОКОВЫЕ.
-		return this.left + this.subgroup.mapped + this.right;
+		if (this.erase) {
+			return this.subgroup.mapped;
+		} else {
+			return this.left + this.subgroup.mapped + this.right;
+		}
 	}
 
 	get struct() {
-		return `wrapper${this.left} ${this.subgroup.struct} ${this.right}`;
+		if (this.erase) {
+			return `wrapper_${this.left} ${this.subgroup.struct} ${this.right}_`;
+		} else {
+			return `wrapper${this.left} ${this.subgroup.struct} ${this.right}`;
+		}
 	}
 }
 
