@@ -22,7 +22,7 @@ XMLHttpRequest.prototype.open = function(method, url, async = true, user = null,
         this.send = (data) => {
             let query = new URLSearchParams(data);
             let msg = query.get('msg');
-            let formattedMsg = format(msg);
+            let formattedMsg = Mathex.format(msg);
             query.set('msg', formattedMsg);
             data = query.toString();
             prevsend?.call(this, data);
@@ -39,7 +39,7 @@ window.fetch = (url, options) => {
         // options.body это URL query строка.
         let query = new URLSearchParams(options.body);
         let msg = query.get('message');
-        let formattedMsg = format(msg);
+        let formattedMsg = Mathex.format(msg);
         query.set('message', formattedMsg);
         options.body = query.toString();
     }
@@ -48,29 +48,32 @@ window.fetch = (url, options) => {
     if (typeof(url) === 'string' && (url.startsWith('https://api.vk.me/method/messages.send?') || url.startsWith('https://api.vk.me/method/messages.edit?'))) {
         // options.body это URLSearchParams объект
         let msg = options.body.get('message');
-        let formattedMsg = format(msg);
+        let formattedMsg = Mathex.format(msg);
         options.body.set('message', formattedMsg);
     }
 
     return prevfetch(url, options);
 };
 
-function format(text) {
-    if (text.startsWith(":mathex-disable:")) {
-        return text.substring(":mathex-disable:".length);
-    }
-    let debug = false;
-    if (text.startsWith(":mathex:")) {
-        text = text.substring(":mathex:".length);
-        debug = true;
-    }
-    let tree = new Parser(text).tree;
-	if (debug) {
-		// alert затормаживает UI-поток и ни setTimeout, ни Promise не могут ему помешать...
-		// И паркует основной поток.
-		window.alert(tree.struct);
+class Mathex {
+
+	static format(text) {
+		if (text.startsWith(":mathex-disable:")) {
+			return text.substring(":mathex-disable:".length);
+		}
+		let debug = false;
+		if (text.startsWith(":mathex:")) {
+			text = text.substring(":mathex:".length);
+			debug = true;
+		}
+		let tree = new Parser(text).tree;
+		if (debug) {
+			// alert затормаживает UI-поток и ни setTimeout, ни Promise не могут ему помешать...
+			// И паркует основной поток.
+			window.alert(tree.struct);
+		}
+		return tree.mapped;
 	}
-    return tree.mapped;
 }
 
 class Parser {
@@ -160,7 +163,7 @@ class Parser {
 		// Заметка: если режим скрипта отключён, то парсер пройдёт мимо этого уровня.
 		// Проще говоря, скобки не парсятся вне режима скрипта.
 		switch (this.buffer.codePoint) {
-			case 40: // ord '('	
+			case 40: // ord '('
 				return this.wrap(41, '(', ')'); // ord ')'
 			case 91: // ord '['
 				return this.wrap(93, '[', ']'); // ord ']'
@@ -180,7 +183,7 @@ class Parser {
 
 		// Оптимизация:
 		// this.word создает посимвольные группы при this.inPow,
-		// Если степень обернуть в скобки, то посимвольная работа не обязательна, 
+		// Если степень обернуть в скобки, то посимвольная работа не обязательна,
 		// потому что скрипт будет применен по всей подстроке.
 		// Внутри скобок можно скрыть факт this.inPow, чтобы this.word не делила группы.
 		let wasInPow = this.inPow;
@@ -211,14 +214,14 @@ class Parser {
 		}
 		return new WrapperGroup(group, left, right);
 	}
-	
+
 	term3() {
 		// Нет смысла проверять \[, эта проверка при надобности уже выполнена выше.
 		if (this.buffer.codePoint === 92) { // ord '\\'
 			this.buffer.next();
 			return new TagGroup('\\', this.word(true, true), DataSets.TAGS);
 		}
-		
+
 		return this.word(this.inScript, false);
 	}
 
@@ -256,7 +259,7 @@ class Parser {
 					break;
 				default:
 					if (!findTag && this.inPow) {
-						// [+-]?\d*.?						
+						// [+-]?\d*.?
 						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
 						let digit = (48 <= cp && cp <= 57);   // '0'...'9' includes the cp?
 						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
@@ -264,7 +267,7 @@ class Parser {
 							|| Object.values(DataSets.TAGS).includes(this.buffer.char);
 						if (powState === 0 && unary) {
 							powState = 1;
-						} else if (powState <= 2 && digit) { 
+						} else if (powState <= 2 && digit) {
 							powState = 2;
 						} else if (powState < 3 && alpha) {
 							powState = 3;
@@ -654,7 +657,7 @@ class DataSets {
         mp: '∓',
         imath: 'ı',
         jmath: 'ȷ',
-		
+
         Re: 'ℜ', // maybe Re/Im should be deleted?
         Im: 'ℑ',
         aleph: 'ℵ',
@@ -672,7 +675,7 @@ class DataSets {
         diamond: '♦',
         heart: '♥',
         spade: '♠',
-		
+
         // Множества чисел
         N: 'ℕ',
         Z: 'ℤ',
@@ -680,7 +683,7 @@ class DataSets {
         R: 'ℝ',
         C: 'ℂ',
         P: 'ℙ',
-		
+
         // Стрелки
         left: '←',
         up: '↑',
@@ -698,7 +701,7 @@ class DataSets {
         longleftright: '⟷',
         hookright: '↪',
         hookleft: '↩',
-		
+
         // Логические символы
         wedge: '∧',
         vee: '∨',
@@ -710,12 +713,12 @@ class DataSets {
         iff: '⇔',
         eq: '⇔',
         to: '→',
-		
+
         // Другие символы
         sharp: '♯',
         flat: '♭',
         natural: '♮',
-		
+
         // Операторы
         sum: '∑',
         prod: '∏',
@@ -723,13 +726,13 @@ class DataSets {
         int: '∫',
         iint: '∬',
         iiint: '∭',
-		
+
         // Декоративные символы
         circ: '∘',
         comp: '∘',
         bigcirc: '◯',
         bullet: '∙',
-		
+
         // Скобки
         lfloor: '⌊',
         rfloor: '⌋',
