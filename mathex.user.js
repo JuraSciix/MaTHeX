@@ -92,14 +92,14 @@ class Parser {
 	}
 
 	get tree() {
+		// Сбрасываем каретку буфера для повторного парсинга
+		this.buffer.reset();
+		
 		let groups = [];
 
 		while (this.buffer.still) {
 			groups.push(this.term1());
 		}
-
-		// Сбрасываем каретку буфера для повторного парсинга
-		this.buffer.reset();
 
 		let tree = list(groups);
 		if (tree === EmptyGroup.INSTANCE) {
