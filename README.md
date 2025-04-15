@@ -99,13 +99,14 @@ For example:
 
 | Input                | Output   |
 |----------------------|----------|
-| \\\[\alpha^2x\\]     | α²ˣ      |
+| \\\[\alpha^2x\\]     | α²x      |
 | \\\[\alpha^x+2\\]    | αˣ+2     |
-| \\\[\alpha^(x+2)\\]  | α⁽ˣ⁺²⁾   |
+| \\\[\alpha^(x+2)\\]  | α⁽x+2)   |
 | \\\[\alpha^xy\\]     | αˣy      |
-| \\\[\alpha^(xy)\\]   | α⁽ˣʸ⁾    |
+| \\\[\alpha^{(xy)}\\]   | α⁽ˣʸ⁾    |
 | \\\[\alpha^\[x+2]\\] | α^\[x+2] |
-| \\\[\alpha_(i+j)\\]  | α₍ᵢ₊ⱼ₎    |
+| \\\[\alpha_{(i+j)}\\]  | α₍ᵢ₊ⱼ₎    |
+| \\\[\alpha_(i+j)\\]  | α₍i+j)    |
 | \\\[\alpha_i+j\\]    | αᵢ+j    |
 
 > `\[α^[x+2]\]` is `α^[x+2]` because we can't make the `[]` as superscript.
