@@ -87,8 +87,10 @@ class Parser {
 		this.inScript = false;
 		// Последняя не закрытая скобка (если есть)
 		this.unwrapper = null;
-		// Мы сканируем степень?
+		// Мы сканируем индекс (^ или _)?
 		this.inIndex = false;
+		// Мы внутри группы? {...}
+		this.inGroup = false;
 	}
 
 	get tree() {
@@ -171,7 +173,13 @@ class Parser {
 			//case 91: // ord '['
 			//	return this.wrap(93, '[', ']'); // ord ']'
 			case 123: // ord '{'
-				return this.wrap(125, '{', '}', true); // ord '}'
+				// В группах фигурные скобки считаются литералами.
+				// Оптимизация (inGroup): this.word() будет сканировать всё вплоть до закрывающей фигурной скобки
+				let prevInGroup = this.inGroup;
+				this.inGroup = true;
+				let g = this.wrap(125, '{', '}', true); // ord '}'
+				this.inGroup = prevInGroup;
+				return g;
 			default:
 				return this.term3();
 		}
@@ -241,7 +249,8 @@ class Parser {
 					run = false;
 					break;
 				case 123: // ord '{'
-					if (findTag || (this.inScript && !this.inIndex)) {
+					if (findTag) {
+					// Игнорируем этот символ, так как он идёт не после символа индекса (^ или _)
 						run = false;
 					}
 					break;
@@ -265,7 +274,9 @@ class Parser {
 					}
 					break;
 				default:
-					if (!findTag && this.inIndex) {
+					// Если мы внутри группы (inGroup), то собираем всё, пока не встретим закрытую фигурную скобку.
+					// Если мы внутри индекса (inIndex), то забираем строго один символ.
+					if (!findTag && this.inIndex && !this.inGroup) {
 						let unary = (cp === 43 || cp === 45); // ord '+', ord '-'
 						let digit = (48 <= cp && cp <= 57);   // '0'...'9' includes the cp?
 						let alpha = (65 <= cp && cp <= 90)    // 'A'...'Z' includes the cp?
