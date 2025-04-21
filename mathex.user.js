@@ -249,13 +249,13 @@ class Parser {
 					run = false;
 					break;
 				case 123: // ord '{'
-					if (findTag) {
-					// Игнорируем этот символ, так как он идёт не после символа индекса (^ или _)
+					if (findTag || indexState !== 0) {
+						// Игнорируем этот символ, так как он идёт не после символа индекса (^ или _)
 						run = false;
 					}
 					break;
 				case 125: // ord '}'
-					if (findTag || this.inIndex) {
+					if (findTag || this.inIndex || indexState !== 0) {
 						run = false;
 					}
 					break;
@@ -263,13 +263,13 @@ class Parser {
 				case 91: // ord '['
 				case 41: // ord ')'
 				case 93: // ord ']'
-					if (findTag) {
+					if (findTag || indexState !== 0) {
 						run = false;
 					}
 					break;
 				case 94: // ord '^'
 				case 95: // ord '_'
-					if (findTag || this.inScript) {
+					if (findTag || this.inScript || indexState !== 0) {
 						run = false;
 					}
 					break;
