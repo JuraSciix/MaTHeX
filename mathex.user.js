@@ -659,6 +659,8 @@ class DataSets {
 		supseteq: '⊇',
 		subset: '⊂',
 		supset: '⊃',
+		notsupset: '⊅',
+        notsupseteq: '⊉',
 		in: '∈',
 		notin: '∉',
 		ni: '∋',
