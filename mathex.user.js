@@ -36,7 +36,15 @@ XMLHttpRequest.prototype.open = function(method, url, async = true, user = null,
 const prevfetch = window.fetch;
 window.fetch = (url, options) => {
 	// new VK messenger support
-	const apiEndpoints = ['https://api.vk.com/method/messages.send?', 'https://api.vk.com/method/messages.edit?'];
+	const apiEndpoints = [
+		'https://api.vk.com/method/messages.send',
+		'https://api.vk.com/method/messages.edit',
+		
+		// С заделом на будущее, когда ВК наконец выполнят своё обещание,
+		// и переедут на домен vk.ru;
+		'https://api.vk.ru/method/messages.send', 
+		'https://api.vk.ru/method/messages.edit', 
+	];
 	if (typeof(url) === 'string' && apiEndpoints.some(x => url.startsWith(x))) {
 		// options.body это URL query строка.
 		let query = new URLSearchParams(options.body);
