@@ -39,13 +39,13 @@ const prevfetch = window.fetch;
 window.fetch = (url, options) => {
 	// new VK messenger support
 	const apiEndpoints = [
+		// Legacy 
 		'https://api.vk.com/method/messages.send',
 		'https://api.vk.com/method/messages.edit',
-		
-		// С заделом на будущее, когда ВК наконец выполнят своё обещание,
-		// и переедут на домен vk.ru;
-		'https://api.vk.ru/method/messages.send', 
-		'https://api.vk.ru/method/messages.edit', 
+
+		// Actual
+		'https://web.api.vk.ru/method/messages.send', 
+		'https://web.api.vk.ru/method/messages.edit', 
 	];
 	if (typeof(url) === 'string' && apiEndpoints.some(x => url.startsWith(x))) {
 		// options.body это URL query строка.
