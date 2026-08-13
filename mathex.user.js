@@ -3,7 +3,9 @@
 // @version      2.1.5
 // @description  ...
 // @author       JuraSciix
+// @match        https://vk.ru/*
 // @match        https://vk.com/*
+// @include      https://vk.ru/im/convo/*
 // @include      https://vk.com/im/convo/*
 // @include      https://web.vk.me/*
 // @grant        none
