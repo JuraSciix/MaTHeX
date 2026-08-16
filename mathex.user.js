@@ -40,12 +40,12 @@ window.fetch = (url, options) => {
 	// new VK messenger support
 	const apiEndpoints = [
 		// Legacy 
-		'https://api.vk.com/method/messages.send',
-		'https://api.vk.com/method/messages.edit',
+		'https://api.vk.com/method/messages.send?',
+		'https://api.vk.com/method/messages.edit?',
 
 		// Actual
-		'https://web.api.vk.ru/method/messages.send', 
-		'https://web.api.vk.ru/method/messages.edit', 
+		'https://web.api.vk.ru/method/messages.send?', 
+		'https://web.api.vk.ru/method/messages.edit?', 
 	];
 	if (typeof(url) === 'string' && apiEndpoints.some(x => url.startsWith(x))) {
 		// options.body это URL query строка.
